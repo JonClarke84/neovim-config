@@ -33,6 +33,21 @@ endfunc
 
 vim.cmd[[noremap <leader>clw :call LogWordUnderCursor()<CR>]]
 
+-- set <leader> useeffect to do the boilerplate for useEffect in React
+vim.cmd[[
+  func UseEffectBoilerPlate()
+    exe "normal! o"
+    exe "normal! iuseEffect(() => {"
+    exe "normal! o"
+    exe "normal! i}, [])"
+    exe "normal! ko"
+    exe "normal! i \<Tab>"
+    startinsert
+  endfunc
+]]
+
+vim.cmd[[noremap <leader>useeffect :call UseEffectBoilerPlate()<CR>]]
+
 vim.api.nvim_set_keymap(
   'i', -- Insert mode
   '<Tab>', -- Key to map
