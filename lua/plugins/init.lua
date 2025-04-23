@@ -11,7 +11,6 @@ local default_plugins = {
   },
 
   {
-  {
     "jackMort/ChatGPT.nvim",
       event = "VeryLazy",
       config = function()
