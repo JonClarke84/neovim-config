@@ -11,6 +11,14 @@ local default_plugins = {
   },
 
   {
+    dir = "~/Code - personal projects/jshelp-nvim/",
+    config = function()
+      require("jshelp").setup()
+    end,
+    lazy = false
+  },
+
+  {
     "jackMort/ChatGPT.nvim",
       event = "VeryLazy",
       config = function()
