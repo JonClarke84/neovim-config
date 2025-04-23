@@ -6,6 +6,11 @@ return {
     version = false, -- Use the latest version
     opts = {
       -- Add any custom options here
+      provider = "claude",
+      claude = {
+        endpoint = "https:/api.anthropic.com",
+        model = "claude-3-7-latest"
+      }
     },
     build = "make", -- If you want to build from source, use "make BUILD_FROM_SOURCE=true"
     dependencies = {
