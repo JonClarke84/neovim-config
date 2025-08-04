@@ -10,25 +10,6 @@ local default_plugins = {
     build = function() vim.fn["mkdp#util#install"]() end,
   },
 
-  {
-    "jackMort/ChatGPT.nvim",
-      event = "VeryLazy",
-      config = function()
-        require("chatgpt").setup({
-          openai_params = {
-          model = "gpt-4o",
-          max_tokens = 3000
-        },
-        api_key_cmd = "echo $OPENAI_API_KEY",
-      })
-      end,
-      dependencies = {
-        "MunifTanjim/nui.nvim",
-        "nvim-lua/plenary.nvim",
-        "folke/trouble.nvim",
-        "nvim-telescope/telescope.nvim"
-      }
-  },
 
   {
     'stevearc/oil.nvim',
@@ -59,16 +40,6 @@ local default_plugins = {
     lazy = false,
   },
 
-  {
-    "zbirenbaum/nvterm",
-    init = function()
-      require("core.utils").load_mappings "nvterm"
-    end,
-    config = function(_, opts)
-      require "base46.term"
-      require("nvterm").setup(opts)
-    end,
-  },
 
   {
     "NvChad/nvim-colorizer.lua",
@@ -285,7 +256,6 @@ local default_plugins = {
   {
     "yetone/avante.nvim",
     event = "VeryLazy",
-    lazy = false,
     version = false, -- set this if you want to always pull the latest change
     opts = {
       -- add any opts here
@@ -373,7 +343,3 @@ vim.api.nvim_set_hl(0, 'LeapLabelSecondary', {
 })
 
 require('oil').setup()
-require('toggleterm').setup({
-  shade_terminals = false,
-  open_mappings = [[<c-\>]],
-})

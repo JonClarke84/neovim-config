@@ -12,13 +12,6 @@ local lazypath = vim.fn.stdpath "data" .. "/lazy/lazy.nvim"
 
 -- Place this in your init.lua or a file that's sourced by init.lua
 
--- Set keymap to accept completion with Tab
-vim.api.nvim_set_keymap(
-  'i', -- Insert mode
-  '<Tab>', -- Key to map
-  'pumvisible() ? "\\<C-n>" : "\\<Tab>"', -- Expression to evaluate
-  {expr = true, noremap = true} -- Options: 'expr' evaluates the expression, 'noremap' prevents recursive mapping
-)
 
 vim.cmd[[
 func LogWordUnderCursor()
@@ -48,12 +41,6 @@ vim.cmd[[
 
 vim.cmd[[noremap <leader>useeffect :call UseEffectBoilerPlate()<CR>]]
 
-vim.api.nvim_set_keymap(
-  'i', -- Insert mode
-  '<Tab>', -- Key to map
-  'pumvisible() ? "\\<YourAcceptSuggestionCommand>" : "\\<Tab>"', -- Replace <YourAcceptSuggestionCommand> with the plugin command
-  {expr = true, noremap = true}
-)
 
 -- bootstrap lazy.nvim!
 if not vim.loop.fs_stat(lazypath) then
