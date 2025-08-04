@@ -12,26 +12,26 @@ local lazypath = vim.fn.stdpath "data" .. "/lazy/lazy.nvim"
 
 -- Place this in your init.lua or a file that's sourced by init.lua
 
--- Set keymap to accept completion with Tab
-vim.api.nvim_set_keymap(
-  'i', -- Insert mode
-  '<Tab>', -- Key to map
-  'pumvisible() ? "\\<C-n>" : "\\<Tab>"', -- Expression to evaluate
-  {expr = true, noremap = true} -- Options: 'expr' evaluates the expression, 'noremap' prevents recursive mapping
-)
 
-vim.cmd[[
-func LogWordUnderCursor()
-  exe "normal! yiw"
-  exe "normal! console.log('')"
-  exe "normal! hhp"
-  exe "normal! li: "
-  exe "normal! $i, "
-  exe "normal! p"
-endfunc
-]]
+-- Log word under cursor function
+local function log_word_under_cursor()
+  -- Get the word under cursor
+  local word = vim.fn.expand('<cword>')
+  -- Get current line content and position
+  local line = vim.api.nvim_get_current_line()
+  local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+  
+  -- Create the console.log line
+  local log_line = string.format("console.log('%s:', %s)", word, word)
+  
+  -- Insert the log line on the next line
+  vim.api.nvim_buf_set_lines(0, row, row, false, {log_line})
+  
+  -- Move cursor to the end of the inserted line
+  vim.api.nvim_win_set_cursor(0, {row + 1, #log_line})
+end
 
-vim.cmd[[noremap <leader>clw :call LogWordUnderCursor()<CR>]]
+vim.keymap.set('n', '<leader>clw', log_word_under_cursor, { desc = 'Console log word under cursor' })
 
 -- set <leader> useeffect to do the boilerplate for useEffect in React
 vim.cmd[[
@@ -48,12 +48,6 @@ vim.cmd[[
 
 vim.cmd[[noremap <leader>useeffect :call UseEffectBoilerPlate()<CR>]]
 
-vim.api.nvim_set_keymap(
-  'i', -- Insert mode
-  '<Tab>', -- Key to map
-  'pumvisible() ? "\\<YourAcceptSuggestionCommand>" : "\\<Tab>"', -- Replace <YourAcceptSuggestionCommand> with the plugin command
-  {expr = true, noremap = true}
-)
 
 -- bootstrap lazy.nvim!
 if not vim.loop.fs_stat(lazypath) then

@@ -10,25 +10,6 @@ local default_plugins = {
     build = function() vim.fn["mkdp#util#install"]() end,
   },
 
-  {
-    "jackMort/ChatGPT.nvim",
-      event = "VeryLazy",
-      config = function()
-        require("chatgpt").setup({
-          openai_params = {
-          model = "gpt-4o",
-          max_tokens = 3000
-        },
-        api_key_cmd = "echo $OPENAI_API_KEY",
-      })
-      end,
-      dependencies = {
-        "MunifTanjim/nui.nvim",
-        "nvim-lua/plenary.nvim",
-        "folke/trouble.nvim",
-        "nvim-telescope/telescope.nvim"
-      }
-  },
 
   {
     'stevearc/oil.nvim',
@@ -37,13 +18,6 @@ local default_plugins = {
     dependencies = { "nvim-tree/nvim-web-devicons" },
   },
 
-  {
-    'ggandor/leap.nvim',
-    requires = 'tpope/vim-repeat',
-    opts = function()
-      return require "plugins.configs.leap"
-    end,
-  },
 
   {
     "NvChad/base46",
@@ -59,16 +33,6 @@ local default_plugins = {
     lazy = false,
   },
 
-  {
-    "zbirenbaum/nvterm",
-    init = function()
-      require("core.utils").load_mappings "nvterm"
-    end,
-    config = function(_, opts)
-      require "base46.term"
-      require("nvterm").setup(opts)
-    end,
-  },
 
   {
     "NvChad/nvim-colorizer.lua",
@@ -173,7 +137,6 @@ local default_plugins = {
       {
         -- snippet plugin
         "L3MON4D3/LuaSnip",
-        dependencies = "rafamadriz/friendly-snippets",
         opts = { history = true, updateevents = "TextChanged,TextChangedI" },
         config = function(_, opts)
           require("plugins.configs.others").luasnip(opts)
@@ -285,7 +248,6 @@ local default_plugins = {
   {
     "yetone/avante.nvim",
     event = "VeryLazy",
-    lazy = false,
     version = false, -- set this if you want to always pull the latest change
     opts = {
       -- add any opts here
@@ -345,35 +307,5 @@ if #config.plugins > 0 then
 end
 
 require("lazy").setup(default_plugins, config.lazy_nvim)
-local leap = require('leap')
-leap.opts.highlight_unlabeled_phase_one_targets = true
-vim.keymap.set({'n', 'x', 'o'}, 's',  '<Plug>(leap-forward)')
-vim.keymap.set({'n', 'x', 'o'}, 'S',  '<Plug>(leap-backward)')
-
--- The below settings make Leap's highlighting closer to what you've been
--- used to in Lightspeed.
-
-vim.api.nvim_set_hl(0, 'LeapBackdrop', { link = 'Comment' }) -- or some grey
-vim.api.nvim_set_hl(0, 'LeapMatch', {
-  -- For light themes, set to 'black' or similar.
-  fg = 'white', bold = true, nocombine = true,
-})
-
--- Lightspeed colors
--- primary labels: bg = "#f02077" (light theme) or "#ff2f87"  (dark theme)
--- secondary labels: bg = "#399d9f" (light theme) or "#99ddff" (dark theme)
--- shortcuts: bg = "#f00077", fg = "white"
--- You might want to use either the primary label or the shortcut colors
--- for Leap primary labels, depending on your taste.
-vim.api.nvim_set_hl(0, 'LeapLabelPrimary', {
-  fg = 'red', bold = true, nocombine = true,
-})
-vim.api.nvim_set_hl(0, 'LeapLabelSecondary', {
-  fg = 'blue', bold = true, nocombine = true,
-})
 
 require('oil').setup()
-require('toggleterm').setup({
-  shade_terminals = false,
-  open_mappings = [[<c-\>]],
-})
