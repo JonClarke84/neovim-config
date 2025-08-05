@@ -1,5 +1,50 @@
 dofile(vim.g.base46_cache .. "lsp")
-require "nvchad.lsp"
+
+-- Define LSP diagnostic signs using modern vim.fn.sign_define (no deprecation)
+vim.fn.sign_define("DiagnosticSignError", { text = "󰅙", numhl = "DiagnosticSignError", texthl = "DiagnosticSignError" })
+vim.fn.sign_define("DiagnosticSignWarn", { text = "", numhl = "DiagnosticSignWarn", texthl = "DiagnosticSignWarn" })
+vim.fn.sign_define("DiagnosticSignInfo", { text = "󰋼", numhl = "DiagnosticSignInfo", texthl = "DiagnosticSignInfo" })
+vim.fn.sign_define("DiagnosticSignHint", { text = "󰌵", numhl = "DiagnosticSignHint", texthl = "DiagnosticSignHint" })
+
+-- Configure diagnostics with performance optimizations for large files
+vim.diagnostic.config {
+  virtual_text = {
+    prefix = "",
+    spacing = 2,
+    source = "if_many",
+    -- Limit virtual text to reduce rendering overhead
+    severity = { min = vim.diagnostic.severity.WARN },
+  },
+  signs = {
+    severity = { min = vim.diagnostic.severity.HINT },
+  },
+  underline = {
+    severity = { min = vim.diagnostic.severity.WARN },
+  },
+  update_in_insert = false,
+  severity_sort = true,
+  float = {
+    border = "single",
+    source = "if_many",
+    header = "",
+    prefix = "",
+    max_width = 80,
+    max_height = 20,
+  },
+}
+
+-- Optimize LSP handlers for better performance
+vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
+  border = "single",
+  max_width = 80,
+  max_height = 20,
+})
+vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, {
+  border = "single",
+  focusable = false,
+  relative = "cursor",
+  max_width = 80,
+})
 
 local M = {}
 local utils = require "core.utils"
@@ -10,6 +55,25 @@ M.on_attach = function(client, bufnr)
 
   if client.server_capabilities.signatureHelpProvider then
     require("nvchad.signature").setup(client)
+  end
+  
+  -- Optimize for large files by reducing diagnostic frequency
+  local buf_line_count = vim.api.nvim_buf_line_count(bufnr)
+  if buf_line_count > 1000 then
+    -- For large files, reduce diagnostic update frequency
+    client.server_capabilities.documentHighlightProvider = false
+    -- Disable some resource-intensive features for large files
+    if client.name == "typescript-language-server" or client.name == "eslint" then
+      vim.api.nvim_create_autocmd("CursorHold", {
+        buffer = bufnr,
+        callback = function()
+          vim.diagnostic.hide(nil, bufnr)
+          vim.defer_fn(function()
+            vim.diagnostic.show(nil, bufnr)
+          end, 500)
+        end,
+      })
+    end
   end
 end
 

@@ -43,7 +43,7 @@ local default_plugins = {
       -- execute colorizer as soon as possible
       vim.defer_fn(function()
         require("colorizer").attach_to_buffer(0)
-      end, 0)
+      end, 100) -- Add small delay to prevent blocking buffer switch
     end,
   },
 
@@ -82,7 +82,10 @@ local default_plugins = {
     end,
     config = function(_, opts)
       dofile(vim.g.base46_cache .. "syntax")
-      require("nvim-treesitter.configs").setup(opts)
+      -- Defer treesitter setup to prevent blocking buffer operations
+      vim.defer_fn(function()
+        require("nvim-treesitter.configs").setup(opts)
+      end, 50)
     end,
   },
 
@@ -125,7 +128,10 @@ local default_plugins = {
     "neovim/nvim-lspconfig",
     event = "User FilePost",
     config = function()
-      require "plugins.configs.lspconfig"
+      -- Defer LSP setup to prevent blocking buffer operations
+      vim.defer_fn(function()
+        require "plugins.configs.lspconfig"
+      end, 200)
     end,
   },
 
@@ -247,7 +253,7 @@ local default_plugins = {
   },
   {
     "yetone/avante.nvim",
-    event = "VeryLazy",
+    cmd = { "AvanteAsk", "AvanteChat", "AvanteEdit", "AvanteRefresh" },
     version = false, -- set this if you want to always pull the latest change
     opts = {
       -- add any opts here
@@ -274,7 +280,7 @@ local default_plugins = {
       {
         -- support for image pasting
         "HakonHarnes/img-clip.nvim",
-        event = "VeryLazy",
+        lazy = true,
         opts = {
           -- recommended settings
           default = {
@@ -291,6 +297,7 @@ local default_plugins = {
       {
         -- Make sure to set this up properly if you have lazy=true
         'MeanderingProgrammer/render-markdown.nvim',
+        lazy = true,
         opts = {
           file_types = { "markdown", "Avante" },
         },

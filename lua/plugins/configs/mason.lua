@@ -1,5 +1,14 @@
 local options = {
-  ensure_installed = { "lua-language-server" }, -- not an option from mason.nvim
+  ensure_installed = { 
+    "lua-language-server",
+    "prettier",
+    "eslint_d", 
+    "typescript-language-server",
+    "gopls",
+    "ruby-lsp",
+    "kotlin-language-server",
+    "deno"
+  }, -- not an option from mason.nvim
 
   PATH = "skip",
 
