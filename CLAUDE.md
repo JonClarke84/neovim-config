@@ -53,3 +53,6 @@ Mason ensures these language servers and tools are installed:
 - gopls (Go language server)
 
 The configuration is optimized for web development (JavaScript/TypeScript/React) and Go development with comprehensive AI assistance integration.
+
+### Plugin Management Guidelines
+- When adding or removing a plugin, make sure to update the README

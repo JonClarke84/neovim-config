@@ -1,4 +1,4 @@
-# Jonathan's Neovim Configuration
+# Optimized Neovim Configuration
 
 A highly optimized Neovim configuration built on NvChad, customized for web development with a focus on performance and productivity.
 
@@ -33,20 +33,55 @@ A highly optimized Neovim configuration built on NvChad, customized for web deve
 
 ## Plugin Configuration
 
-### Core Plugins
-- **LSP**: `nvim-lspconfig` with Mason for package management
-- **Completion**: `nvim-cmp` with multiple sources
-- **Syntax**: `nvim-treesitter` with deferred loading
-- **File Management**: `nvim-tree` and `oil.nvim`
-- **Fuzzy Finding**: `telescope.nvim`
-- **Git**: `gitsigns.nvim`
+## Plugin List
 
-### Custom Additions
-- **Copilot**: GitHub AI pair programming
-- **Avante**: AI code assistance
-- **none-ls**: Formatting with Prettier (Go auto-format, JS/TS manual)
-- **Oil**: Alternative file manager
-- **Markdown Preview**: Live preview for documentation
+### NvChad Core Plugins
+- **[base46](https://github.com/NvChad/base46)** - Theme engine with 56+ themes
+- **[ui](https://github.com/NvChad/ui)** - Custom statusline, tabufline, and UI components
+- **[nvim-colorizer.lua](https://github.com/NvChad/nvim-colorizer.lua)** - Color highlighter (deferred loading)
+- **[nvim-web-devicons](https://github.com/nvim-tree/nvim-web-devicons)** - File type icons
+
+### Language Support & LSP
+- **[nvim-lspconfig](https://github.com/neovim/nvim-lspconfig)** - LSP configurations (deferred loading)
+- **[mason.nvim](https://github.com/williamboman/mason.nvim)** - Language server package manager
+- **[nvim-treesitter](https://github.com/nvim-treesitter/nvim-treesitter)** - Syntax highlighting (deferred loading)
+- **[none-ls.nvim](https://github.com/nvimtools/none-ls.nvim)** - Formatting and diagnostics
+
+### Completion & Snippets
+- **[nvim-cmp](https://github.com/hrsh7th/nvim-cmp)** - Completion engine
+- **[cmp_luasnip](https://github.com/saadparwaiz1/cmp_luasnip)** - LuaSnip completion source
+- **[cmp-nvim-lsp](https://github.com/hrsh7th/cmp-nvim-lsp)** - LSP completion source
+- **[cmp-buffer](https://github.com/hrsh7th/cmp-buffer)** - Buffer completion source
+- **[cmp-path](https://github.com/hrsh7th/cmp-path)** - Path completion source
+- **[cmp-nvim-lua](https://github.com/hrsh7th/cmp-nvim-lua)** - Lua completion source
+- **[LuaSnip](https://github.com/L3MON4D3/LuaSnip)** - Snippet engine
+
+### File Management & Navigation
+- **[nvim-tree.lua](https://github.com/nvim-tree/nvim-tree.lua)** - File explorer
+- **[oil.nvim](https://github.com/stevearc/oil.nvim)** - Alternative file manager
+- **[telescope.nvim](https://github.com/nvim-telescope/telescope.nvim)** - Fuzzy finder and picker
+
+### AI & Productivity
+- **[copilot.lua](https://github.com/zbirenbaum/copilot.lua)** - GitHub Copilot integration
+- **[avante.nvim](https://github.com/yetone/avante.nvim)** - AI code assistance (command-only loading)
+- **[img-clip.nvim](https://github.com/HakonHarnes/img-clip.nvim)** - Image pasting support (lazy loaded)
+- **[render-markdown.nvim](https://github.com/MeanderingProgrammer/render-markdown.nvim)** - Markdown rendering (lazy loaded)
+
+### Development Tools
+- **[gitsigns.nvim](https://github.com/lewis6991/gitsigns.nvim)** - Git integration and signs
+- **[nvim-autopairs](https://github.com/windwp/nvim-autopairs)** - Auto-close brackets and quotes
+- **[Comment.nvim](https://github.com/numToStr/Comment.nvim)** - Smart commenting
+- **[indent-blankline.nvim](https://github.com/lukas-reineke/indent-blankline.nvim)** - Indentation guides
+- **[which-key.nvim](https://github.com/folke/which-key.nvim)** - Keybinding helper
+- **[formatter.nvim](https://github.com/mhartington/formatter.nvim)** - Code formatting
+- **[nvim-lint](https://github.com/mfussenegger/nvim-lint)** - Async linting (ESLint disabled)
+
+### Markdown & Documentation
+- **[markdown-preview.nvim](https://github.com/iamcco/markdown-preview.nvim)** - Live markdown preview
+
+### Utilities
+- **[plenary.nvim](https://github.com/nvim-lua/plenary.nvim)** - Lua utility functions
+- **[kanagawa.nvim](https://github.com/rebelot/kanagawa.nvim)** - Current theme
 
 ## Installation
 
