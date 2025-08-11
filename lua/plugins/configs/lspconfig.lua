@@ -12,14 +12,14 @@ vim.diagnostic.config {
     prefix = "",
     spacing = 2,
     source = "if_many",
-    -- Limit virtual text to reduce rendering overhead
-    severity = { min = vim.diagnostic.severity.WARN },
+    -- Show INFO level diagnostics for ESLint unused variable warnings
+    severity = { min = vim.diagnostic.severity.INFO },
   },
   signs = {
     severity = { min = vim.diagnostic.severity.HINT },
   },
   underline = {
-    severity = { min = vim.diagnostic.severity.WARN },
+    severity = { min = vim.diagnostic.severity.INFO },
   },
   update_in_insert = false,
   severity_sort = true,
