@@ -104,11 +104,13 @@ M.capabilities.textDocument.completion.completionItem = {
   },
 }
 
-require("lspconfig").lua_ls.setup {
+vim.lsp.config('lua_ls', {
+  cmd = { 'lua-language-server' },
+  filetypes = { 'lua' },
+  root_markers = { '.luarc.json', '.luarc.jsonc', '.luacheckrc', '.stylua.toml', 'stylua.toml', 'selene.toml', 'selene.yml', '.git' },
   on_init = M.on_init,
   on_attach = M.on_attach,
   capabilities = M.capabilities,
-
   settings = {
     Lua = {
       diagnostics = {
@@ -126,12 +128,19 @@ require("lspconfig").lua_ls.setup {
       },
     },
   },
-}
+})
 
-require('lspconfig').astro.setup{
+vim.lsp.enable('lua_ls')
+
+vim.lsp.config('astro', {
+  cmd = { 'astro-ls', '--stdio' },
+  filetypes = { 'astro' },
+  root_markers = { 'package.json', 'tsconfig.json', 'jsconfig.json', '.git' },
   on_init = M.on_init,
   on_attach = M.on_attach,
   capabilities = M.capabilities
-}
+})
+
+vim.lsp.enable('astro')
 
 return M
