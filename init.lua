@@ -1,5 +1,14 @@
 require "core"
 
+-- Compatibility shim for vim.lsp.get_active_clients (deprecated in 0.11)
+-- Maintains backward compatibility with NvChad UI components
+if not vim.lsp.get_active_clients then
+  vim.lsp.get_active_clients = function(opts)
+    opts = opts or {}
+    return vim.lsp.get_clients(opts)
+  end
+end
+
 local custom_init_path = vim.api.nvim_get_runtime_file("lua/custom/init.lua", false)[1]
 
 if custom_init_path then

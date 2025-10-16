@@ -1,22 +1,22 @@
 dofile(vim.g.base46_cache .. "lsp")
 
--- Define LSP diagnostic signs using modern vim.fn.sign_define (no deprecation)
-vim.fn.sign_define("DiagnosticSignError", { text = "󰅙", numhl = "DiagnosticSignError", texthl = "DiagnosticSignError" })
-vim.fn.sign_define("DiagnosticSignWarn", { text = "", numhl = "DiagnosticSignWarn", texthl = "DiagnosticSignWarn" })
-vim.fn.sign_define("DiagnosticSignInfo", { text = "󰋼", numhl = "DiagnosticSignInfo", texthl = "DiagnosticSignInfo" })
-vim.fn.sign_define("DiagnosticSignHint", { text = "󰌵", numhl = "DiagnosticSignHint", texthl = "DiagnosticSignHint" })
-
 -- Configure diagnostics with performance optimizations for large files
-vim.diagnostic.config {
+vim.diagnostic.config({
+  signs = {
+    text = {
+      [vim.diagnostic.severity.ERROR] = "󰅙",
+      [vim.diagnostic.severity.WARN] = "",
+      [vim.diagnostic.severity.INFO] = "󰋼",
+      [vim.diagnostic.severity.HINT] = "󰌵",
+    },
+    severity = { min = vim.diagnostic.severity.HINT },
+  },
   virtual_text = {
     prefix = "",
     spacing = 2,
     source = "if_many",
     -- Limit virtual text to reduce rendering overhead
     severity = { min = vim.diagnostic.severity.WARN },
-  },
-  signs = {
-    severity = { min = vim.diagnostic.severity.HINT },
   },
   underline = {
     severity = { min = vim.diagnostic.severity.WARN },
@@ -31,7 +31,7 @@ vim.diagnostic.config {
     max_width = 80,
     max_height = 20,
   },
-}
+})
 
 -- Optimize LSP handlers for better performance
 vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
@@ -104,11 +104,11 @@ M.capabilities.textDocument.completion.completionItem = {
   },
 }
 
-require("lspconfig").lua_ls.setup {
+-- Lua Language Server
+vim.lsp.config('lua_ls', {
   on_init = M.on_init,
   on_attach = M.on_attach,
   capabilities = M.capabilities,
-
   settings = {
     Lua = {
       diagnostics = {
@@ -126,12 +126,17 @@ require("lspconfig").lua_ls.setup {
       },
     },
   },
-}
+})
 
-require('lspconfig').astro.setup{
+vim.lsp.enable('lua_ls')
+
+-- Astro Language Server
+vim.lsp.config('astro', {
   on_init = M.on_init,
   on_attach = M.on_attach,
-  capabilities = M.capabilities
-}
+  capabilities = M.capabilities,
+})
+
+vim.lsp.enable('astro')
 
 return M

@@ -73,8 +73,7 @@ A highly optimized Neovim configuration built on NvChad, customized for web deve
 - **[Comment.nvim](https://github.com/numToStr/Comment.nvim)** - Smart commenting
 - **[indent-blankline.nvim](https://github.com/lukas-reineke/indent-blankline.nvim)** - Indentation guides
 - **[which-key.nvim](https://github.com/folke/which-key.nvim)** - Keybinding helper
-- **[formatter.nvim](https://github.com/mhartington/formatter.nvim)** - Code formatting
-- **[nvim-lint](https://github.com/mfussenegger/nvim-lint)** - Async linting (ESLint disabled)
+- **[nvim-lint](https://github.com/mfussenegger/nvim-lint)** - Async linting with eslint_d, golangci-lint, markdownlint
 
 ### Markdown & Documentation
 - **[markdown-preview.nvim](https://github.com/iamcco/markdown-preview.nvim)** - Live markdown preview
@@ -117,8 +116,9 @@ The following language servers are automatically installed via Mason:
 
 ## Custom Commands
 
-- `:Prettier` - Format current buffer with Prettier (JS/TS/JSON/CSS/HTML)
 - `:MasonInstallAll` - Install all configured language servers
+- `:Prettier` - Format current buffer with Prettier (JS/TS/JSON/CSS/HTML/Markdown) via none-ls
+- `:Copilot` - Toggle GitHub Copilot
 - Various NvChad commands (`:NvChadUpdate`, `:Telescope`, etc.)
 
 ## Key Bindings
@@ -151,9 +151,9 @@ The following language servers are automatically installed via Mason:
 │       ├── chadrc.lua      # Main config (theme: kanagawa)
 │       ├── plugins.lua     # Custom plugin additions
 │       └── configs/        # Custom plugin configurations
-│           ├── null-ls.lua      # Formatting configuration
-│           ├── lint.lua         # Linting (disabled)
-│           └── lspconfig.lua    # Additional LSP configs
+│           ├── null-ls.lua      # Formatting configuration (Prettier, gofmt, etc)
+│           ├── lint.lua         # Linting configuration (ESLint, golangci-lint, markdownlint)
+│           └── lspconfig.lua    # Additional LSP configs (TypeScript, Go, Ruby, Kotlin)
 ├── CLAUDE.md              # AI assistant guidance
 └── lazy-lock.json         # Plugin version lockfile
 ```
@@ -163,6 +163,7 @@ The following language servers are automatically installed via Mason:
 - **Startup Time**: ~20-50ms (very fast)
 - **Buffer Switching**: ~0.06ms for small files, ~29ms for large TypeScript files
 - **Memory Usage**: Optimized with lazy loading and deferred initialization
+- **LSP API**: Modern vim.lsp.config API (Neovim 0.11+ compatible)
 
 ## Customization
 
