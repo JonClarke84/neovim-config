@@ -57,6 +57,15 @@ vim.cmd[[
 
 vim.cmd[[noremap <leader>useeffect :call UseEffectBoilerPlate()<CR>]]
 
+-- Copilot accept suggestion mapping
+vim.keymap.set('i', '<C-l>', function()
+  if require('copilot.suggestion').is_visible() then
+    require('copilot.suggestion').accept()
+  else
+    -- Fallback: insert literal <C-l> if no suggestion visible
+    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<C-l>', true, true, true), 'n', false)
+  end
+end, { silent = true, desc = 'Accept Copilot suggestion' })
 
 -- bootstrap lazy.nvim!
 if not vim.loop.fs_stat(lazypath) then
