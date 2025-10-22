@@ -99,7 +99,16 @@ M.tabufline = {
     -- close buffer + hide terminal buffer
     ["<leader>x"] = {
       function()
-        require("nvchad.tabufline").close_buffer()
+        local bufnr = vim.api.nvim_get_current_buf()
+        local buf_count = #vim.api.nvim_list_bufs()
+
+        if buf_count > 1 then
+          require("nvchad.tabufline").close_buffer()
+        else
+          -- If this is the last buffer, create a new one before closing
+          vim.cmd "enew"
+          vim.cmd("bwipeout " .. bufnr)
+        end
       end,
       "Close buffer",
     },
