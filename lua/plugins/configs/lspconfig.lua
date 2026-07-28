@@ -33,19 +33,6 @@ vim.diagnostic.config({
   },
 })
 
--- Optimize LSP handlers for better performance
-vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
-  border = "single",
-  max_width = 80,
-  max_height = 20,
-})
-vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, {
-  border = "single",
-  focusable = false,
-  relative = "cursor",
-  max_width = 80,
-})
-
 local M = {}
 local utils = require "core.utils"
 
@@ -57,23 +44,9 @@ M.on_attach = function(client, bufnr)
     require("nvchad.signature").setup(client)
   end
   
-  -- Optimize for large files by reducing diagnostic frequency
-  local buf_line_count = vim.api.nvim_buf_line_count(bufnr)
-  if buf_line_count > 1000 then
-    -- For large files, reduce diagnostic update frequency
+  -- Optimize for large files by reducing highlight churn
+  if vim.api.nvim_buf_line_count(bufnr) > 1000 then
     client.server_capabilities.documentHighlightProvider = false
-    -- Disable some resource-intensive features for large files
-    if client.name == "typescript-language-server" or client.name == "eslint" then
-      vim.api.nvim_create_autocmd("CursorHold", {
-        buffer = bufnr,
-        callback = function()
-          vim.diagnostic.hide(nil, bufnr)
-          vim.defer_fn(function()
-            vim.diagnostic.show(nil, bufnr)
-          end, 500)
-        end,
-      })
-    end
   end
 end
 
@@ -130,13 +103,55 @@ vim.lsp.config('lua_ls', {
 
 vim.lsp.enable('lua_ls')
 
--- Astro Language Server
+-- TypeScript Language Server
+vim.lsp.config('ts_ls', {
+  on_init = M.on_init,
+  on_attach = M.on_attach,
+  capabilities = M.capabilities,
+})
+
+vim.lsp.enable('ts_ls')
+
+-- Go Language Server
+vim.lsp.config('gopls', {
+  on_init = M.on_init,
+  on_attach = M.on_attach,
+  capabilities = M.capabilities,
+})
+
+vim.lsp.enable('gopls')
+
+-- Kotlin Language Server
+vim.lsp.config('kotlin_language_server', {
+  on_init = M.on_init,
+  on_attach = M.on_attach,
+  capabilities = M.capabilities,
+})
+
+vim.lsp.enable('kotlin_language_server')
+
+-- Astro Language Server (astro-ls is not a Mason ensure_installed entry;
+-- only enable when the binary is actually present)
 vim.lsp.config('astro', {
   on_init = M.on_init,
   on_attach = M.on_attach,
   capabilities = M.capabilities,
 })
 
-vim.lsp.enable('astro')
+if vim.fn.executable('astro-ls') == 1 then
+  vim.lsp.enable('astro')
+end
+
+-- Ruby LSP (Mason lists ruby-lsp but its install depends on the local Ruby
+-- toolchain; only enable when the binary is actually present)
+vim.lsp.config('ruby_lsp', {
+  on_init = M.on_init,
+  on_attach = M.on_attach,
+  capabilities = M.capabilities,
+})
+
+if vim.fn.executable('ruby-lsp') == 1 then
+  vim.lsp.enable('ruby_lsp')
+end
 
 return M

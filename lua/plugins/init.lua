@@ -60,33 +60,133 @@ local default_plugins = {
 
   {
     "lukas-reineke/indent-blankline.nvim",
-    version = "2.20.7",
+    main = "ibl",
     event = "User FilePost",
-    opts = function()
-      return require("plugins.configs.others").blankline
-    end,
-    config = function(_, opts)
-      require("core.utils").load_mappings "blankline"
+    config = function()
       dofile(vim.g.base46_cache .. "blankline")
-      require("indent_blankline").setup(opts)
+      require("ibl").setup {
+        indent = { char = "│" },
+        scope = { enabled = true },
+        exclude = {
+          filetypes = {
+            "help", "terminal", "lazy", "lspinfo",
+            "TelescopePrompt", "TelescopeResults",
+            "mason", "nvdash", "nvcheatsheet", "",
+          },
+          buftypes = { "terminal" },
+        },
+      }
     end,
   },
 
   {
     "nvim-treesitter/nvim-treesitter",
     event = { "BufReadPost", "BufNewFile" },
-    cmd = { "TSInstall", "TSBufEnable", "TSBufDisable", "TSModuleInfo" },
+    cmd = { "TSInstall", "TSUpdate", "TSUninstall", "TSLog" },
     build = ":TSUpdate",
     opts = function()
       return require "plugins.configs.treesitter"
     end,
     config = function(_, opts)
       dofile(vim.g.base46_cache .. "syntax")
-      -- Defer treesitter setup to prevent blocking buffer operations
-      vim.defer_fn(function()
-        require("nvim-treesitter.configs").setup(opts)
-      end, 50)
+      if opts.ensure_installed then
+        require("nvim-treesitter.install").install(opts.ensure_installed, { skip = { installed = true } })
+      end
+
+      -- the main branch no longer auto-starts highlighting; opt in per buffer
+      local function start_treesitter(buf)
+        if pcall(vim.treesitter.start, buf) then
+          vim.bo[buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+        end
+      end
+
+      vim.api.nvim_create_autocmd("FileType", {
+        group = vim.api.nvim_create_augroup("TreesitterStart", { clear = true }),
+        callback = function(args)
+          start_treesitter(args.buf)
+        end,
+      })
+
+      -- the buffer that triggered lazy-loading has already fired FileType
+      for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+        if vim.api.nvim_buf_is_loaded(buf) then
+          start_treesitter(buf)
+        end
+      end
     end,
+  },
+
+  -- lint (eslint_d via Mason) — restores the lint layer lost with lua/custom/
+  {
+    "mfussenegger/nvim-lint",
+    event = "User FilePost",
+    config = function()
+      local lint = require "lint"
+
+      lint.linters_by_ft = {
+        javascript = { "eslint_d" },
+        javascriptreact = { "eslint_d" },
+        typescript = { "eslint_d" },
+        typescriptreact = { "eslint_d" },
+      }
+
+      -- some eslint configs (e.g. the microfrontend shared config) log plain
+      -- text to stdout ahead of the JSON report, which breaks the parser
+      local eslint_d = lint.linters.eslint_d
+      local orig_parser = eslint_d.parser
+      eslint_d.parser = function(output, bufnr, cwd)
+        local json_start = output:find("%[")
+        if json_start then
+          output = output:sub(json_start)
+        end
+        return orig_parser(output, bufnr, cwd)
+      end
+
+      local function lint_buf(buf)
+        if not lint.linters_by_ft[vim.bo[buf].filetype] then
+          return
+        end
+        -- eslint errors out entirely when a file has no config above it
+        local eslint_root = vim.fs.root(buf, {
+          "eslint.config.js",
+          "eslint.config.mjs",
+          "eslint.config.cjs",
+          ".eslintrc.js",
+          ".eslintrc.json",
+        })
+        if eslint_root then
+          -- eslint resolves its config from cwd, so lint from the package dir
+          lint.try_lint(nil, { cwd = eslint_root })
+        end
+      end
+
+      -- FileType (re-fired by NvFilePost after lazy-load) covers the buffer
+      -- that triggered loading; BufReadPost would have already fired by then
+      vim.api.nvim_create_autocmd({ "FileType", "BufWritePost", "InsertLeave" }, {
+        group = vim.api.nvim_create_augroup("Lint", { clear = true }),
+        callback = function(args)
+          lint_buf(args.buf)
+        end,
+      })
+    end,
+  },
+
+  -- formatting (prettier via Mason)
+  {
+    "stevearc/conform.nvim",
+    event = "User FilePost",
+    opts = {
+      formatters_by_ft = {
+        javascript = { "prettier" },
+        javascriptreact = { "prettier" },
+        typescript = { "prettier" },
+        typescriptreact = { "prettier" },
+        css = { "prettier" },
+        html = { "prettier" },
+        json = { "prettier" },
+        markdown = { "prettier" },
+      },
+    },
   },
 
   -- git stuff
@@ -304,7 +404,19 @@ local default_plugins = {
         ft = { "markdown", "Avante" },
       },
     },
-  }
+  },
+
+  {
+    "mikavilpas/yazi.nvim",
+    event = "VeryLazy",
+    keys = {
+      { "<leader>y", "<cmd>Yazi<cr>", desc = "Open Yazi at current file" },
+      { "<leader>cw", "<cmd>Yazi cwd<cr>", desc = "Open Yazi in working directory" },
+    },
+    opts = {
+      open_for_directories = false,
+    },
+  },
 }
 
 local config = require("core.utils").load_config()

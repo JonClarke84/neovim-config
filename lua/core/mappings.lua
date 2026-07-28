@@ -51,9 +51,9 @@ M.general = {
 
     ["<leader>fm"] = {
       function()
-        vim.lsp.buf.format { async = true }
+        require("conform").format { async = true, lsp_format = "fallback" }
       end,
-      "LSP formatting",
+      "Format buffer",
     },
   },
 
@@ -158,7 +158,7 @@ M.lspconfig = {
 
     ["K"] = {
       function()
-        vim.lsp.buf.hover()
+        vim.lsp.buf.hover { border = "single", max_width = 80, max_height = 20 }
       end,
       "LSP hover",
     },
@@ -172,7 +172,7 @@ M.lspconfig = {
 
     ["<leader>ls"] = {
       function()
-        vim.lsp.buf.signature_help()
+        vim.lsp.buf.signature_help { border = "single", max_width = 80 }
       end,
       "LSP signature help",
     },
@@ -214,14 +214,14 @@ M.lspconfig = {
 
     ["[d"] = {
       function()
-        vim.diagnostic.goto_prev { float = { border = "rounded" } }
+        vim.diagnostic.jump { count = -1, float = { border = "rounded" } }
       end,
       "Goto prev",
     },
 
     ["]d"] = {
       function()
-        vim.diagnostic.goto_next { float = { border = "rounded" } }
+        vim.diagnostic.jump { count = 1, float = { border = "rounded" } }
       end,
       "Goto next",
     },

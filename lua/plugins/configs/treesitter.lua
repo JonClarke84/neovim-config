@@ -8,15 +8,8 @@ local options = {
     "javascript",
     "typescript",
     "tsx",
-    "go"
-},
-
-  highlight = {
-    enable = true,
-    use_languagetree = true,
+    "go",
   },
-
-  indent = { enable = true },
 }
 
 return options

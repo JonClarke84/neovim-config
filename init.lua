@@ -1,9 +1,10 @@
 require "core"
 
--- Suppress LSP offset encoding warnings
+-- Suppress LSP position/offset encoding warnings (NvChad v2.0 ui predates the
+-- 0.11 make_position_params signature)
 local notify = vim.notify
 vim.notify = function(msg, ...)
-  if msg:match("offset_encoding") then
+  if msg:match("offset_encoding") or msg:match("position_encoding") then
     return
   end
   notify(msg, ...)
@@ -59,8 +60,10 @@ vim.cmd[[noremap <leader>useeffect :call UseEffectBoilerPlate()<CR>]]
 
 -- Copilot accept suggestion mapping
 vim.keymap.set('i', '<C-l>', function()
-  if require('copilot.suggestion').is_visible() then
-    require('copilot.suggestion').accept()
+  -- copilot.lua only loads as an avante dependency, so it may be absent
+  local ok, suggestion = pcall(require, 'copilot.suggestion')
+  if ok and suggestion.is_visible() then
+    suggestion.accept()
   else
     -- Fallback: insert literal <C-l> if no suggestion visible
     vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<C-l>', true, true, true), 'n', false)
@@ -78,7 +81,7 @@ vim.opt.rtp:prepend(lazypath)
 require "plugins"
 
 vim.o.foldmethod = "expr"
-vim.o.foldexpr = "nvim_treesitter#foldexpr()"
+vim.o.foldexpr = "v:lua.vim.treesitter.foldexpr()"
 vim.o.foldlevel = 99
 vim.o.foldenable = true
 vim.opt.relativenumber = true

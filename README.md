@@ -8,8 +8,8 @@ A highly optimized Neovim configuration built on NvChad, customized for web deve
 - **🎨 Beautiful UI**: Kanagawa theme with custom NvChad components
 - **🤖 AI Integration**: Copilot for code completion and Avante.nvim for AI assistance
 - **📝 Language Support**: Full LSP support for TypeScript, JavaScript, Go, Ruby, Kotlin
-- **🔧 Smart Formatting**: Prettier integration with manual control via `:Prettier` command
-- **🛠️ Development Tools**: Integrated terminal, file explorer, fuzzy finder, and Git integration
+- **🔧 Smart Formatting**: Prettier via conform.nvim, on demand with `<leader>fm`
+- **🛠️ Development Tools**: File explorer, fuzzy finder, and Git integration
 
 ## Key Customizations
 
@@ -44,8 +44,9 @@ A highly optimized Neovim configuration built on NvChad, customized for web deve
 ### Language Support & LSP
 - **[nvim-lspconfig](https://github.com/neovim/nvim-lspconfig)** - LSP configurations (deferred loading)
 - **[mason.nvim](https://github.com/williamboman/mason.nvim)** - Language server package manager
-- **[nvim-treesitter](https://github.com/nvim-treesitter/nvim-treesitter)** - Syntax highlighting (deferred loading)
-- **[none-ls.nvim](https://github.com/nvimtools/none-ls.nvim)** - Formatting and diagnostics
+- **[nvim-treesitter](https://github.com/nvim-treesitter/nvim-treesitter)** - Syntax highlighting (main branch, deferred loading)
+- **[nvim-lint](https://github.com/mfussenegger/nvim-lint)** - Async linting (eslint_d)
+- **[conform.nvim](https://github.com/stevearc/conform.nvim)** - Formatting (prettier, LSP fallback)
 
 ### Completion & Snippets
 - **[nvim-cmp](https://github.com/hrsh7th/nvim-cmp)** - Completion engine
@@ -73,7 +74,7 @@ A highly optimized Neovim configuration built on NvChad, customized for web deve
 - **[Comment.nvim](https://github.com/numToStr/Comment.nvim)** - Smart commenting
 - **[indent-blankline.nvim](https://github.com/lukas-reineke/indent-blankline.nvim)** - Indentation guides
 - **[which-key.nvim](https://github.com/folke/which-key.nvim)** - Keybinding helper
-- **[nvim-lint](https://github.com/mfussenegger/nvim-lint)** - Async linting with eslint_d, golangci-lint, markdownlint
+- **[yazi.nvim](https://github.com/mikavilpas/yazi.nvim)** - Yazi file manager integration
 
 ### Markdown & Documentation
 - **[markdown-preview.nvim](https://github.com/iamcco/markdown-preview.nvim)** - Live markdown preview
@@ -117,7 +118,7 @@ The following language servers are automatically installed via Mason:
 ## Custom Commands
 
 - `:MasonInstallAll` - Install all configured language servers
-- `:Prettier` - Format current buffer with Prettier (JS/TS/JSON/CSS/HTML/Markdown) via none-ls
+- `<leader>fm` - Format current buffer via conform.nvim (Prettier for JS/TS/JSON/CSS/HTML/Markdown, LSP fallback otherwise)
 - `:Copilot` - Toggle GitHub Copilot
 - Various NvChad commands (`:NvChadUpdate`, `:Telescope`, etc.)
 
@@ -142,21 +143,20 @@ The following language servers are automatically installed via Mason:
 ├── init.lua                 # Entry point with custom functions
 ├── lua/
 │   ├── core/               # NvChad core configuration
-│   ├── plugins/            # Plugin configurations
-│   │   ├── init.lua        # Main plugin list with optimizations
+│   ├── plugins/            # Plugin configurations (all tracked in git)
+│   │   ├── init.lua        # Main plugin list incl. nvim-lint + conform
 │   │   └── configs/        # Individual plugin configs
-│   │       ├── lspconfig.lua    # LSP with performance optimizations
+│   │       ├── lspconfig.lua    # All LSP servers (lua_ls, ts_ls, gopls, kotlin, astro, ruby)
 │   │       └── mason.lua        # Language server management
-│   └── custom/             # User customizations
-│       ├── chadrc.lua      # Main config (theme: kanagawa)
-│       ├── plugins.lua     # Custom plugin additions
-│       └── configs/        # Custom plugin configurations
-│           ├── null-ls.lua      # Formatting configuration (Prettier, gofmt, etc)
-│           ├── lint.lua         # Linting configuration (ESLint, golangci-lint, markdownlint)
-│           └── lspconfig.lua    # Additional LSP configs (TypeScript, Go, Ruby, Kotlin)
+│   └── custom/             # Gitignored; holds only chadrc.lua (theme)
+│       └── chadrc.lua      # Theme: kanagawa
 ├── CLAUDE.md              # AI assistant guidance
-└── lazy-lock.json         # Plugin version lockfile
+└── lazy-lock.json         # Plugin version lockfile (tracked in git)
 ```
+
+> **Note**: all functional config lives in tracked files under `lua/plugins/`.
+> The gitignored `lua/custom/` layer previously carried the LSP/lint setup and
+> was lost in March 2026 — don't put anything you care about there.
 
 ## Performance
 
@@ -170,9 +170,9 @@ The following language servers are automatically installed via Mason:
 The configuration is built to be easily customizable:
 
 1. **Theme**: Change in `lua/custom/chadrc.lua`
-2. **Plugins**: Add/remove in `lua/custom/plugins.lua`
-3. **LSP**: Modify `lua/custom/configs/lspconfig.lua`
-4. **Keybindings**: Update in `init.lua` or respective config files
+2. **Plugins**: Add/remove in `lua/plugins/init.lua`
+3. **LSP**: Modify `lua/plugins/configs/lspconfig.lua`
+4. **Keybindings**: Update in `init.lua` or `lua/core/mappings.lua`
 
 ## Troubleshooting
 
